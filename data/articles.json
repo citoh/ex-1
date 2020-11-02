@@ -5,11 +5,6 @@
         "title": "Article 4"
     },
     {
-        "id": 5,
-        "author_id": 4,
-        "title": "Article 5"
-    },
-    {
         "id": 6,
         "author_id": 8,
         "title": "Article 6"
@@ -21,16 +16,6 @@
     },
     {
         "id": 8,
-        "author_id": 8,
-        "title": "Article 8"
-    },
-    {
-        "id": 9,
-        "author_id": 13,
-        "title": "Teste"
-    },
-    {
-        "id": 10,
         "author_id": 13,
         "title": "Teste"
     }

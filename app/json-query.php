@@ -4,26 +4,28 @@ require_once("resp.php");
 
 class JsonQuery {
     
-    private $articles;
-    private $authors;
-    private $countries;
+    private $articles; //articles array
+    private $authors; //authors array
+    private $countries; //countries array
 
-    private $articleNextId = 0;
-    private $authorNextId = 0;
+    private $articleNextId = 0; //articles id controller
+    private $authorNextId = 0;  //articles id controller
 
-    private $perPage = -1;
-    private $page = -1;
-    private $order = "author_id";
-    private $sort = "asc";
+    private $perPage = -1;  //items per page
+    private $page = -1; //num of page
+    private $order = "author_id"; //field to order list
+    private $sort = "asc"; //asc or desc
     
 
-    /*------------------------------------------------------*/
+    /* ================================================================== */
+
     // Exercise A
     // Return a list of authors with their articles and country.
     public function endpoint_a(){
         return $this->getAllData();
     }
 
+     /*------------------------------------------------------*/
     // Exercise B
     // Add a new article with an author that might or might now exist.
     // If the author does not exist then it should be created with an empty country.
@@ -36,38 +38,44 @@ class JsonQuery {
         return $this->getAllData();
     }
 
+
+     /*------------------------------------------------------*/
     // Exercise C
     // Update one or multiple articles title and author
     public function endpoint_c(){
-
+        $this->updateArticles();
+        $this->updateAuthors();
         return $this->getAllData();
     }
 
+     /*------------------------------------------------------*/
     // Exercise D
     // Delete one or multiple articles.
     public function endpoint_d(){
-        $ids = null;
-        if( isset($_REQUEST["id"]) ){
-            $ids = array($_REQUEST["id"]);
-        }elseif( isset($_REQUEST["ids"]) ){
-            $ids = array($_REQUEST["ids"])[0];
-        }
-        
-        for($i = 0; $i < count($this->articles); $i++){
-            if( in_array($this->articles[$i]["id"], $ids ) ){
-                unset($this->articles[$i]);
+        if( isset($_REQUEST["id"]) ||  isset($_REQUEST["ids"])){
+            $ids = null;
+            if( isset($_REQUEST["id"]) ){
+                $ids = array($_REQUEST["id"]);
+            }elseif( isset($_REQUEST["ids"]) ){
+                $ids = array($_REQUEST["ids"])[0];
             }
+            
+            for($i = 0; $i < count($this->articles); $i++){
+                if( in_array($this->articles[$i]["id"], $ids ) ){
+                    unset($this->articles[$i]);
+                }
+            }
+
+            $this->saveJsonFile('../data/articles.json', $this->articles);
         }
-
-        $this->saveJsonFile('../data/articles.json', $this->articles);
-
         return $this->getAllData();
     }
 
 
-    /*------------------------------------------------------*/
+    /* ================================================================== */
 
-    function __construct($articlesJsonFile, $authorsJsonFile, $countriesJsonFile) {
+
+    public function __construct($articlesJsonFile, $authorsJsonFile, $countriesJsonFile) {
         $this->articles  = $this->loadJsonDataToArray( ( $articlesJsonFile ) );
         $this->authors   = $this->loadJsonDataToArray( ( $authorsJsonFile ) );
         $this->countries = $this->loadJsonDataToArray( ( $countriesJsonFile ) );
@@ -137,6 +145,7 @@ class JsonQuery {
         return $resp = new Resp( $dataResp, $vars, "OK", 200 );
     }
 
+
     public function insertAuthors($newAuthors){
     
         foreach($newAuthors as $newAuthor){
@@ -164,17 +173,51 @@ class JsonQuery {
     }
 
 
-    public function updateAuthor($id, $newName){
+    public function updateAuthor($id, $newName, $country_code = ""){
+        $country_code = isset($this->countries[strtolower( $country_code )]) 
+                        ? strtoupper($country_code)
+                        : "";
+
         for($i = 0; $i < count($this->authors); $i++){
             if($this->authors[$i]["id"] == $id){
                 $this->authors[$i]["name"] = $newName;
+                $this->authors[$i]["country_code"] = $country_code;
                 break; 
             }
         }
     }
 
 
-    public function insertArticle($title, $authorName){
+    public function updateAuthors(){
+        if( isset($_REQUEST["authors_ids"]) && isset($_REQUEST["authors_names"]) && 
+            isset($_REQUEST["authors_countries"]) ){
+            
+            $authors = array();
+            $authors_ids = $_REQUEST["authors_ids"];
+            $authors_names = $_REQUEST["authors_names"];
+            $authors_countries = $_REQUEST["authors_countries"];
+            
+            if( count($authors_ids) == count($authors_names) && 
+                count($authors_ids) == count($authors_countries)){
+
+                for($i = 0; $i < count($authors_ids); $i++){
+                    $authors[] = array(
+                        "id" => $authors_ids[$i],
+                        "name" => $authors_names[$i],
+                        "country_code" => $authors_countries[$i],
+                    );
+                }
+                foreach($authors as $author){
+                    $this->updateAuthor($author["id"], $author["name"], $author["country_code"]);
+                }
+            }
+
+            $this->saveJsonFile('../data/authors.json', $this->authors);
+
+        }
+    }
+
+    public function getAuthorIdByName($authorName){
         $authorId = null;
         foreach($this->authors as $author){
             if($author["name"] === $authorName){
@@ -186,7 +229,12 @@ class JsonQuery {
             $newAuthor = array( array( "name" => $authorName) );
             $authorId = $this->insertAuthors($newAuthor);
         }
-        
+        return $authorId;
+    }
+
+    public function insertArticle($title, $authorName){
+        $authorId = $this->getAuthorIdByName($authorName);
+
         $newArticle = array(
             "id" => $this->articleNextId,
             "author_id" => $authorId,
@@ -200,6 +248,48 @@ class JsonQuery {
         return $newArticle["id"];
     }
 
+    public function updateArticle($id, $title, $authorName){
+        $authorId = $this->getAuthorIdByName($authorName);
+        
+        for($i=0; $i < count($this->articles); $i++){
+            if($this->articles[$i]["id"] == $id){
+                $this->articles[$i]["title"] = $title;
+                $this->articles[$i]["author_id"] = $authorId;
+            }
+        }
+    }
+
+    public function updateArticles(){
+        if( isset($_REQUEST["articles_ids"]) && isset($_REQUEST["articles_titles"]) && 
+            isset($_REQUEST["authors_names"]) ){
+        
+            $articles = array();
+            $articles_ids = $_REQUEST["articles_ids"];
+            $articles_titles = $_REQUEST["articles_titles"];
+            $authors_names = $_REQUEST["authors_names"];
+
+            if( count($articles_ids) == count($articles_titles) && 
+            count($articles_ids) == count($authors_names)){
+                
+                for($i = 0; $i < count($articles_ids); $i++){
+                    $articles[] = array(
+                        "id" => $articles_ids[$i],
+                        "title" => $articles_titles[$i],
+                        "author_name" => $authors_names[$i],
+                    );
+                }
+                foreach($articles as $article){
+                    $this->updateArticle($article["id"], $article["title"], $article["author_name"]);
+                }
+
+            }
+
+            //$this->saveJsonFile('../data/articles.json', $this->articles);
+            return $this->getAllData();
+
+        }
+    }
+
     
     public function deleteArticles($ids){
         for($i = 0; $i < count($this->articles); $i++){
@@ -207,6 +297,7 @@ class JsonQuery {
                 unset( $this->article[$i]["id"] );
             }
         }
+        $this->saveJsonFile('../data/articles.json', $this->articles);
     }
 
     public function getAuthorById($id){

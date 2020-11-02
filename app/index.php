@@ -27,17 +27,19 @@ require_once("json-query.php");
 require_once("routes-helper.php");
 require_once("resp.php");
 
+//Data
 $articlesJsonFile   = "../data/articles.json"; 
 $authorsJsonFile    = "../data/authors.json";
 $countriesJsonFile  = "../data/countries.json";
 
+//Json Files and Returns Controller
 $jsonQuery = new JsonQuery( $articlesJsonFile, $authorsJsonFile, $countriesJsonFile );
 
-$routesHelper = new RoutesHelper("http://127.0.0.1/ex-1-master/app/");
+//Requests Controls
+$routesHelper = new RoutesHelper("http://127.0.0.1/ex-1/app/");
 
 $actionRequest = $routesHelper->getActionRequest();
 $actionRequest = empty($actionRequest)?"main":$actionRequest;
-
 $resp = new Resp();
 
 if(is_callable( array( $jsonQuery, $actionRequest ) ) ){
