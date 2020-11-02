@@ -1,0 +1,142 @@
+html, body{
+    padding: 0px;
+    margin: 0px;
+    width: 100%;
+    min-height: 100%;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 16px;
+}
+
+body{
+    background: linear-gradient( 45deg, #FFF 50%, #EEE);
+}
+
+.container{
+    width: 98%;
+    max-width: 1080px;
+    margin: 20px auto;
+    padding: 0px;
+    background: #FFF;
+    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.1);
+    border-top: 5px solid  #358;
+}
+
+h1{
+    color: #358;
+    text-align: center;
+    padding: 15px 0px;
+    font-size: 35px;
+    font-weight: lighter;
+}
+
+#frm-articles-add{
+    background: #EEE;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+    padding: 15px;
+}
+
+.frame{
+    border-top: 1px solid #FFF;
+    border-bottom: 1px solid #CCC;
+    position: relative;
+}
+
+.frame .label{
+    flex-grow: 1;
+    box-sizing: border-box;
+    text-align: right;
+    padding: 0px 5px;
+    color: #358;
+}
+
+.frame .cmd{
+    flex-grow: 1;
+    box-sizing: border-box;
+    text-align: center;
+    padding: 10px 5px;
+    text-align: right;
+}
+
+.frame .input{
+    flex-grow: 2;
+    box-sizing: border-box;
+    
+}
+
+.frame .input input{
+    width: 90%;
+    box-sizing: border-box;
+    padding: 8px;
+    border: none;
+    background: none;
+    border-bottom: 1px solid #358;
+    color: #000;
+    font-size: 1.05em;
+    font-weight: bold;
+}
+
+.frame .input input:focus{
+    background: #FFF;
+    transition: 0.5s;
+}
+
+.button{
+    display: inline-block !important;
+    background: #358;
+    text-align: center;
+    padding: 10px;
+    border-radius: 5px;
+    color: #FFF;
+    cursor: pointer;
+    box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.3);
+    transition: 0.2s;
+}
+
+.button:hover{
+    background: #FFF;
+    color: #358;
+    transition: 0.2s;
+}
+
+.table{
+    display: table;
+    width: 100%;
+}
+
+.row{
+    display: table-row;
+}
+
+.row.header .cell{
+    background: #358;
+    color: #FFF;
+    border-left: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.cell{
+    background: #FFF;
+    display: table-cell;
+    text-align: center;
+    padding: 10px;
+    border-left: 1px solid #EEE;
+    border-bottom: 1px solid #EEE;
+}
+
+.row:hover:not(.header) .cell{
+    background: #F5F5F5;
+}
+
+.cell:first-of-type{
+    border-left: none;
+}
+
+.empty-table{
+    padding: 10px;
+    display: block;
+    width: 100%;
+    text-align: center;
+}

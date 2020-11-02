@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<head>
+    <title>Articles Catalog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="./assets/jquery-3.5.1.min.js"></script>
+    <script src="./assets/main.js"></script>
+    <link rel="stylesheet" href="./assets/main.css">
+</head>
+<html>
+    <h1>Articles Catalog</h1>
+    <div class="container">
+        
+        <div id="frm-articles-add" class="frame">
+            <div class="label">Article title:</div>
+            <div class="input"><input type="text" id="title"></div>
+            <div class="label">Author:</div>
+            <div class="input">
+                <input type="text" id="author">
+                <div id="author_autocomplete"></div>
+            </div>
+            <div class="cmd"><div class="button add">Add Article</div></div>
+        </div>
+
+        <div id="frm-articles-list" class="frame">
+            <div id="table-articles" class="table">
+                <div class="row header">
+                    <div class="cell"></div>
+                    <div class="cell">Id</div>
+                    <div class="cell">Title</div>
+                    <div class="cell">Author</div>
+                    <div class="cell">Country</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</html>

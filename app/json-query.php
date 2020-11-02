@@ -93,8 +93,7 @@ class JsonQuery {
         $this->perPage = isset( $_REQUEST["per_page"] )? $_REQUEST["per_page"] : -1;
         $this->page    = isset( $_REQUEST["page"] )? $_REQUEST["page"] : -1;
         $this->order   = isset( $_REQUEST["order"] )? $_REQUEST["order"] : "author_id";
-        $this->sort    = isset( $_REQUEST["desc"] )? $_REQUEST["desc"] : "asc";
-
+        $this->sort    = isset( $_REQUEST["sort"] )? $_REQUEST["sort"] : "asc";
     }
 
 
@@ -319,24 +318,27 @@ class JsonQuery {
     function sortData (&$data, $order, $sort) {
         $data_a = array();
         $data_b = array();
-        
+
         reset($data);
-        
-        if( !isset($data[$order]) )
+
+        if( !isset($data[0][$order]) ){
             return false;
+        }
 
         foreach ($data as $key => $value) {
-            $data_a[$key] = $value[$order];
+            $data_a[] = $value[$order];
         }
 
         if($sort === "asc")
             asort($data_a);
         else
             arsort($data_a);
-        
-        foreach ($data_a as $key => $value) {
-            $data_b[$key] = $data[$key];
-        }
+
+        foreach ($data_a as $key_a => $value_a) 
+            foreach($data as $key => $value)
+                if($value_a == $value[$order])
+                    $data_b[] = $data[$key];
+
         $data = $data_b;
         
         return true;
