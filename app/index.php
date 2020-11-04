@@ -36,7 +36,9 @@ $countriesJsonFile  = "../data/countries.json";
 $jsonQuery = new JsonQuery( $articlesJsonFile, $authorsJsonFile, $countriesJsonFile );
 
 //Requests Controls
-$routesHelper = new RoutesHelper("http://127.0.0.1/ex-1/app/");
+$root = "http://".$_SERVER['HTTP_HOST'];
+$root .= str_replace(basename($_SERVER['SCRIPT_NAME']),"",$_SERVER['SCRIPT_NAME']);
+$routesHelper = new RoutesHelper($root);
 
 $actionRequest = $routesHelper->getActionRequest();
 $actionRequest = empty($actionRequest)?"main":$actionRequest;
