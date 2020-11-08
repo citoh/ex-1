@@ -19,7 +19,7 @@ function loadArticlesTabe(){
                         '<div class="cell">' + item.article_id + '</div>'+
                         '<div class="cell">' + item.article_title + '</div>'+
                         '<div class="cell">' + item.author_name + '</div>'+
-                        '<div class="cell">' + item.country + '</div>'+
+                        '<div class="cell">' + item.country_name + '</div>'+
                     '</div>';
                 $('#table-articles').append(row);
             });

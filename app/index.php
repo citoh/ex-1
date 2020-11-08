@@ -21,7 +21,11 @@ http://localhost:8080/endpoint_a?per_page=5&page=2&order=name&sort=desc
 
 Then use this object inside endpoint "a" to filter which authors will be returned.
 */
-//header('Content-Type: application/json');
+
+//error_reporting(E_ALL);
+//ini_set('display_errors', 1);
+
+header('Content-Type: application/json');
 
 require_once("json-query.php");
 require_once("routes-helper.php");

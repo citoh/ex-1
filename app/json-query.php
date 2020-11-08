@@ -15,6 +15,9 @@ class JsonQuery {
     private $page = -1; //num of page
     private $order = "author_id"; //field to order list
     private $sort = "asc"; //asc or desc
+    private $count = 0;
+    private $firstPageItem = 0;
+    private $lastPageItem = 0;
     
 
     /* ================================================================== */
@@ -90,10 +93,7 @@ class JsonQuery {
             $this->authorNextId++; 
         }
 
-        $this->perPage = isset( $_REQUEST["per_page"] )? $_REQUEST["per_page"] : -1;
-        $this->page    = isset( $_REQUEST["page"] )? $_REQUEST["page"] : -1;
-        $this->order   = isset( $_REQUEST["order"] )? $_REQUEST["order"] : "author_id";
-        $this->sort    = isset( $_REQUEST["sort"] )? $_REQUEST["sort"] : "asc";
+        $this->setVars();
     }
 
 
@@ -101,6 +101,30 @@ class JsonQuery {
         $data = file_get_contents($file);
         return json_decode($data, true);
     }
+
+
+    private function setVars(){
+        $this->count = count($this->articles);
+        $this->perPage = isset( $_REQUEST["per_page"] )? $_REQUEST["per_page"] : -1;
+        $this->page    = isset( $_REQUEST["page"] )? $_REQUEST["page"] : -1;
+        
+        if($this->page === -1 || $this->page === -1){
+            $this->firstPageItem = 0;
+            $this->lastPageItem  = $this->count -1;
+        }else{
+            $this->firstPageItem = ($this->page - 1) * $this->perPage;
+            $this->lastPageItem  = $this->perPage * $this->page;
+            if($this->firstPageItem >= $this->count){
+                $this->firstPageItem = 0;
+                $this->lastPageItem  = 0;
+            }elseif($this->lastPageItem >= $this->count){
+                $this->lastPageItem  = $this->count-1;
+            }
+        }
+        $this->order   = isset( $_REQUEST["order"] )? $_REQUEST["order"] : "author_id";
+        $this->sort    = isset( $_REQUEST["sort"] )? $_REQUEST["sort"] : "asc";
+    }
+
 
     private function saveJsonFile($filepath, $data){
         $content = array_values($data);
@@ -126,19 +150,22 @@ class JsonQuery {
                 "author_id" => $author["id"],
                 "author_name" => $author["name"],
                 "country_code" => $author["country_code"],
-                "country" => $country
+                "country_name" => $country
             );
 
             $data[] = $row;
         }
-
-        $dataResp = $this->dataToResp($data);
+        
+        $dataResp = $this->dataToResp($data, $this->firstPageItem, $this->lastPageItem);
 
         $vars = array(
-            "perPage" => $this->perPage,
-            "page"    => $this->page,
-            "order"   => $this->order,
-            "asc"     => $this->sort
+            "count"     => $this->count,
+            "perPage"   => $this->perPage,
+            "page"      => $this->page,
+            "firstItem" => $this->firstPageItem,
+            "lastItem"  => $this->lastPageItem,
+            "order"     => $this->order,
+            "sort"      => $this->sort
         );
         
         return $resp = new Resp( $dataResp, $vars, "OK", 200 );
@@ -345,7 +372,7 @@ class JsonQuery {
     }
     
 
-    private function dataToResp($data){
+    private function dataToResp($data, $firstPageItem, $lastPageItem){
         $this->sortData($data, $this->order, $this->sort);
         $dataResp;
         if($this->perPage === -1 || $this->page === -1 ){
@@ -353,10 +380,8 @@ class JsonQuery {
         }else{
 
             $dataResp = array();
-            $firstPageItem = $this->perPage * $this->page - $this->perPage;
-            $lastPageItem  = $this->perPage * $this->page;
 
-            for($i = $firstPageItem; $i < $lastPageItem && $i < count($data); $i++ ){
+            for($i = $firstPageItem; $i <= $lastPageItem && $i < count($data); $i++ ){
                 $dataResp[] = $data[$i];
             }
         }
