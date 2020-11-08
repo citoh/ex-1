@@ -5,7 +5,7 @@ $(window).on("load",function() {
 function loadArticlesTabe(){
     $.ajax({
         type: "post",
-        url: "app/endpoint_a?order=author_name&sort=asc",
+        url: "appPHP/endpoint_a?order=author_name&sort=asc",
         beforeSend: function( xhr ) {
             xhr.overrideMimeType( "text/plain; charset=x-user-defined" );
         },
