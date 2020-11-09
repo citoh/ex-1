@@ -103,6 +103,7 @@ h1{
 }
 
 .button.delete{
+    float: left;
     font-size: 0.9em;
     background: #F13;
     margin-left: 15px;
@@ -111,6 +112,18 @@ h1{
 .button.delete:hover{
     background: #FFF;
     color: #F13;
+}
+
+.button.save{
+    float: right;
+    font-size: 0.9em;
+    background: #393;
+    margin-left: 15px;
+}
+
+.button.save:hover{
+    background: #FFF;
+    color: #393;
 }
 
 
@@ -149,6 +162,8 @@ h1{
 #footer{
     background: #358;
     padding: 10px;
+    min-height: 35px;
+    text-align: center;
 }
 
 .cell:first-of-type{
@@ -160,4 +175,14 @@ h1{
     display: block;
     width: 100%;
     text-align: center;
+}
+
+.pagination{
+    display: inline-block;
+    padding: 10px;
+    color: #FFF;;
+}
+
+.pagination.page{
+    display: none;
 }

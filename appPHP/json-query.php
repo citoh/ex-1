@@ -55,17 +55,9 @@ class JsonQuery {
     // Exercise D
     // Delete one or multiple articles.
     public function endpoint_d(){
-        if( isset($_REQUEST["id"]) ||  isset($_REQUEST["ids"])){
+        if( isset($_REQUEST["ids"]) ){
             $ids = array($_REQUEST["ids"])[0];
-            for($i = 0; $i < count($this->articles); $i++){
-                for($j = 0; $j < count($ids); $j++){
-                    if($this->articles[$i]['id'] == $ids[$j]){
-                        unset($this->articles[$i]);
-                        $i--;
-                    }
-                }
-            }
-
+            $this->deleteArticles($ids);
             $this->saveJsonFile('../data/articles.json', $this->articles);
         }
         return $this->getAllData();
@@ -311,14 +303,27 @@ class JsonQuery {
         }
     }
 
-    
     public function deleteArticles($ids){
-        for($i = 0; $i < count($this->articles); $i++){
-            if( in_array($this->article[$i]["id"] ) ){
-                unset( $this->article[$i]["id"] );
-            }
+        print_r($ids);
+        $countArticles = count($this->articles);
+        $itemDeleted = false;
+        for($i = 0; $i < count($ids); $i++){
+            $this->deleteArticle($ids[$i]);
         }
         $this->saveJsonFile('../data/articles.json', $this->articles);
+        exit;
+    }
+
+
+    public function deleteArticle($id){
+        for($i = 0; $i < count($this->articles); $i++){
+            if( $id ==  $this->articles[$i]["id"]){
+                unset($this->articles[$i]);
+                $this->articles = array_values($this->articles);
+                return true;
+            }
+        }
+        return false;
     }
 
     public function getAuthorById($id){

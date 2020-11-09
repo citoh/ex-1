@@ -24,8 +24,10 @@ $(window).on("load",function() {
     $("#btnRemoveArticles").click(function(){
         var ids = []
         $('.cb-article').each(function(){
-            if( $(this).prop('checked') )
-                ids.push( $(this).attr('data-id') );                
+            if( $(this).prop('checked') ){
+                ids.push( $(this).attr('data-id') );
+                $(this).parents('.row').remove();
+            }                
         });
         removeArticles(ids);
     });
@@ -52,7 +54,6 @@ $(window).on("load",function() {
 
 
 function loadArticlesTabe(page, perPage, order, sort){
-    console.log(base_url+"/endpoint_a?page="+page+"&per_page="+perPage+"&order="+order+"&sort="+sort);
     $.ajax({
         type: "get",
         data: { 
@@ -64,8 +65,6 @@ function loadArticlesTabe(page, perPage, order, sort){
         url: base_url+"/endpoint_a",
         dataType:"json",
         success: function (resp) {
-            console.log(resp);
-            console.log(resp.data);
             listArticles(resp.data);
         }
     });
@@ -100,7 +99,6 @@ function addArticle(title, author){
         url: base_url+"/endpoint_b",
         dataType:"json",
         success: function (resp) {
-            console.log(resp.data);
             listArticles(resp.data);
         }
     });
@@ -119,7 +117,6 @@ function removeArticles(ids){
         url: base_url+"/endpoint_d",
         dataType:"json",
         success: function (resp) {
-            console.log(resp.data);
             listArticles(resp.data);
         }
     }).done(
