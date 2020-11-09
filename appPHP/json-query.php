@@ -13,7 +13,7 @@ class JsonQuery {
 
     private $perPage = -1;  //items per page
     private $page = -1; //num of page
-    private $order = "author_id"; //field to order list
+    private $order = "author_name"; //field to order list
     private $sort = "asc"; //asc or desc
     private $count = 0;
     private $firstPageItem = 0;
@@ -34,8 +34,8 @@ class JsonQuery {
     // If the author does not exist then it should be created with an empty country.
     public function endpoint_b(){
         if(isset($_REQUEST["title"]) && isset($_REQUEST["author"])){
-            $articleTitle = $_REQUEST["title"];
-            $authorName = $_REQUEST["author"];
+            $articleTitle = urldecode($_REQUEST["title"]);
+            $authorName = urldecode($_REQUEST["author"]);
             $this->insertArticle($articleTitle, $authorName);
         }
         return $this->getAllData();
@@ -56,16 +56,13 @@ class JsonQuery {
     // Delete one or multiple articles.
     public function endpoint_d(){
         if( isset($_REQUEST["id"]) ||  isset($_REQUEST["ids"])){
-            $ids = null;
-            if( isset($_REQUEST["id"]) ){
-                $ids = array($_REQUEST["id"]);
-            }elseif( isset($_REQUEST["ids"]) ){
-                $ids = array($_REQUEST["ids"])[0];
-            }
-            
+            $ids = array($_REQUEST["ids"])[0];
             for($i = 0; $i < count($this->articles); $i++){
-                if( in_array($this->articles[$i]["id"], $ids ) ){
-                    unset($this->articles[$i]);
+                for($j = 0; $j < count($ids); $j++){
+                    if($this->articles[$i]['id'] == $ids[$j]){
+                        unset($this->articles[$i]);
+                        $i--;
+                    }
                 }
             }
 
@@ -108,19 +105,14 @@ class JsonQuery {
         $this->perPage = isset( $_REQUEST["per_page"] )? $_REQUEST["per_page"] : -1;
         $this->page    = isset( $_REQUEST["page"] )? $_REQUEST["page"] : -1;
         
-        if($this->page === -1 || $this->page === -1){
+        if($this->page == -1 || $this->page == -1){
             $this->firstPageItem = 0;
             $this->lastPageItem  = $this->count -1;
         }else{
             $this->firstPageItem = ($this->page - 1) * $this->perPage;
             $this->lastPageItem  = $this->perPage * $this->page;
-            if($this->firstPageItem >= $this->count){
-                $this->firstPageItem = 0;
-                $this->lastPageItem  = 0;
-            }elseif($this->lastPageItem >= $this->count){
-                $this->lastPageItem  = $this->count-1;
-            }
         }
+
         $this->order   = isset( $_REQUEST["order"] )? $_REQUEST["order"] : "author_id";
         $this->sort    = isset( $_REQUEST["sort"] )? $_REQUEST["sort"] : "asc";
     }
@@ -137,7 +129,9 @@ class JsonQuery {
 
 
     private function getAllData(){
+        
         $data = array();
+
         foreach( $this->articles as $article ){
 
             $author  = $this->getAuthorById( $article["author_id"] );
@@ -155,7 +149,7 @@ class JsonQuery {
 
             $data[] = $row;
         }
-        
+
         $dataResp = $this->dataToResp($data, $this->firstPageItem, $this->lastPageItem);
 
         $vars = array(
@@ -168,7 +162,8 @@ class JsonQuery {
             "sort"      => $this->sort
         );
         
-        return $resp = new Resp( $dataResp, $vars, "OK", 200 );
+        $resp = new Resp( $dataResp, $vars, "OK", 200 );
+        return $resp;
     }
 
 
@@ -342,21 +337,21 @@ class JsonQuery {
     }
 
 
-    function sortData (&$data, $order, $sort) {
+    function sortData ($data, $order, $sort) {
         $data_a = array();
         $data_b = array();
 
         reset($data);
 
         if( !isset($data[0][$order]) ){
-            return false;
+            return $data;
         }
-
+       
         foreach ($data as $key => $value) {
             $data_a[] = $value[$order];
         }
-
-        if($sort === "asc")
+        
+        if($sort == "asc")
             asort($data_a);
         else
             arsort($data_a);
@@ -364,26 +359,15 @@ class JsonQuery {
         foreach ($data_a as $key_a => $value_a) 
             foreach($data as $key => $value)
                 if($value_a == $value[$order])
-                    $data_b[] = $data[$key];
-
-        $data = $data_b;
-        
-        return true;
+                    $data_b[$key_a] = $data[$key_a];
+        return $data_b;
     }
     
 
     private function dataToResp($data, $firstPageItem, $lastPageItem){
-        $this->sortData($data, $this->order, $this->sort);
-        $dataResp;
-        if($this->perPage === -1 || $this->page === -1 ){
-            $dataResp = $data;
-        }else{
-
-            $dataResp = array();
-
-            for($i = $firstPageItem; $i <= $lastPageItem && $i < count($data); $i++ ){
-                $dataResp[] = $data[$i];
-            }
+        $dataResp = $this->sortData($data, $this->order, $this->sort);        
+        if($this->perPage != -1 || $this->page != -1 ){
+            return array_slice($dataResp, $firstPageItem, ($lastPageItem - $firstPageItem) );
         }
         return $dataResp;
     }

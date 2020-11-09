@@ -1,8 +1,8 @@
 var fs = require('fs');
 
-const _ARTICLES_PATH  = './data/articles.json'
-const _AUTHORS_PATH   = './data/authors.json'
-const _COUNTRIES_PATH = './data/countries.json'
+const _ARTICLES_PATH  = '../data/articles.json'
+const _AUTHORS_PATH   = '../data/authors.json'
+const _COUNTRIES_PATH = '../data/countries.json'
 
 const articles  = JSON.parse( fs.readFileSync( _ARTICLES_PATH  ) )
 const authors   = JSON.parse( fs.readFileSync( _AUTHORS_PATH   ) )
@@ -66,9 +66,9 @@ module.exports = class jsonQuery{
 
         var data = allData.slice(firstItem, lastItem);
         
-        return [{
+        return {
             data      : data,
-            vars      : [{
+            vars      : {
                 count     : count,
                 perPage   : parseInt(perPage),
                 page      : parseInt(page),
@@ -76,8 +76,8 @@ module.exports = class jsonQuery{
                 lastItem  : lastItem,
                 order     : order,
                 sort      : sort
-            }]
-        }];
+            }
+        };
     }
 
     getAllData = function(){

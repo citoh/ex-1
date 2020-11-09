@@ -20,8 +20,9 @@ module.exports = function( allowHostAccessList ){
 
     app.get(['/', '/endpoint_a'],  corsConfig( allowHostAccessList ), function (req, res, next) {
         setPagination(req.query)
-        const data = jsonQuery.query(page, perPage, order, sort)
-        data.push({message: "OK", status: 200})
+        var data = jsonQuery.query(page, perPage, order, sort)
+        data.message = "OK"
+        data,status = 200
         res.send( data )
     });
 

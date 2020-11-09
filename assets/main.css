@@ -102,6 +102,18 @@ h1{
     transition: 0.2s;
 }
 
+.button.delete{
+    font-size: 0.9em;
+    background: #F13;
+    margin-left: 15px;
+}
+
+.button.delete:hover{
+    background: #FFF;
+    color: #F13;
+}
+
+
 .table{
     display: table;
     width: 100%;
@@ -117,6 +129,10 @@ h1{
     border-left: 1px solid rgba(255, 255, 255, 0.3);
 }
 
+.row.footer .cell{
+    border: none !important; 
+}
+
 .cell{
     background: #FFF;
     display: table-cell;
@@ -128,6 +144,11 @@ h1{
 
 .row:hover:not(.header) .cell{
     background: #F5F5F5;
+}
+
+#footer{
+    background: #358;
+    padding: 10px;
 }
 
 .cell:first-of-type{

@@ -12,19 +12,22 @@
         
         <div id="frm-articles-add" class="frame">
             <div class="label">Article title:</div>
-            <div class="input"><input type="text" id="title"></div>
+            <div class="input">
+                <input type="text" id="title"></div>
             <div class="label">Author:</div>
             <div class="input">
                 <input type="text" id="author">
                 <div id="author_autocomplete"></div>
             </div>
-            <div class="cmd"><div class="button add">Add Article</div></div>
+            <div class="cmd">
+                <div class="button add" id="btnAddArticle">Add Article</div>
+            </div>
         </div>
-
+        
         <div id="frm-articles-list" class="frame">
             <div id="table-articles" class="table">
                 <div class="row header">
-                    <div class="cell"></div>
+                    <div class="cell"><input type="checkbox" id="check-box-all"></div>
                     <div class="cell">Id</div>
                     <div class="cell">Title</div>
                     <div class="cell">Author</div>
@@ -32,5 +35,9 @@
                 </div>
             </div>
         </div>
+        <div id="footer">
+            <div class="button delete" id="btnRemoveArticles">Delete</div>
+        </div>
     </div>
+
 </html>

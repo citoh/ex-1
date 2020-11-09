@@ -22,10 +22,8 @@ http://localhost:8080/endpoint_a?per_page=5&page=2&order=name&sort=desc
 Then use this object inside endpoint "a" to filter which authors will be returned.
 */
 
-//error_reporting(E_ALL);
-//ini_set('display_errors', 1);
-
-header('Content-Type: application/json');
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 require_once("json-query.php");
 require_once("routes-helper.php");
@@ -46,11 +44,12 @@ $routesHelper = new RoutesHelper($root);
 
 $actionRequest = $routesHelper->getActionRequest();
 $actionRequest = empty($actionRequest)?"main":$actionRequest;
-$resp = new Resp();
+
 
 if(is_callable( array( $jsonQuery, $actionRequest ) ) ){
-    $resp =  $jsonQuery->$actionRequest();
-    echo json_encode( $resp );
+    $resp = $jsonQuery->$actionRequest();
+    $resp->data =  array_values( $resp->data ); //prevent json_encode to reorder array
+    echo json_encode($resp);
 }else{
     echo json_encode( $resp->error404() );
 }
