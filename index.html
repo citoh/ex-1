@@ -37,14 +37,18 @@
         </div>
         <div id="footer">
             <div class="button delete" id="btnRemoveArticles">Delete</div>
-            <div class="pagination" id="pn-per-page">
-                Articles per page:<select id="page">
-                    <option value="-1">All</option>
+            <div class="pagination" id="pn-page">
+                Page <select id="page">
+                    <option value="1">1</option>
                 </select>
             </div>
-            <div class="pagination" id="pn-page">
-                Page:<select id="page">
+            <div class="pagination" id="pn-per-page">
+                Articles per page <select id="per-page">
                     <option value="-1">All</option>
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="50">50</option>
                 </select>
             </div>
             <div class="button save" id="updateArticles">Save Update</div>

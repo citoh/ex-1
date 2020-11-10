@@ -4,7 +4,7 @@ var base_url = "appPHP";
 var count     = 0;
 var firstItem = 0;
 var lastItem  = 0;
-var page      = -1;
+var page      = 1;
 var perPage   = -1;
 var order     = "author_name";
 var sort      = "asc";
@@ -49,6 +49,17 @@ $(window).on("load",function() {
         }
     });
 
+    $('#per-page').change(function(){
+        perPage = $(this).val();
+        loadArticlesTabe(page, perPage, order, sort);
+        UpdatePagesSelect(perPage, count);
+    });
+
+    $('#page').change(function(){
+        page = $(this).val();
+        loadArticlesTabe(page, perPage, order, sort);
+    });
+
 });
 
 
@@ -64,8 +75,14 @@ function loadArticlesTabe(page, perPage, order, sort){
         },
         url: base_url+"/endpoint_a",
         dataType:"json",
+        beforeSend: function(jqXHR, settings) {
+            console.log("loadArticlesTabe: "+settings.url);
+        },
         success: function (resp) {
             listArticles(resp.data);
+            count = resp.vars.count;
+            firstItem = resp.vars.firstItem;
+            lastItem = resp.vars.lastItem;
         }
     });
 }
@@ -98,8 +115,14 @@ function addArticle(title, author){
         },
         url: base_url+"/endpoint_b",
         dataType:"json",
+        beforeSend: function(jqXHR, settings) {
+            console.log("addArticle: "+settings.url);
+        },
         success: function (resp) {
             listArticles(resp.data);
+            count = resp.vars.count;
+            firstItem = resp.vars.firstItem;
+            lastItem = resp.vars.lastItem;
         }
     });
 }
@@ -116,10 +139,23 @@ function removeArticles(ids){
         },
         url: base_url+"/endpoint_d",
         dataType:"json",
+        beforeSend: function(jqXHR, settings) {
+            console.log("removeArticles: "+settings.url);
+        },
         success: function (resp) {
             listArticles(resp.data);
+            count = resp.vars.count;
+            firstItem = resp.vars.firstItem;
+            lastItem = resp.vars.lastItem;
         }
     }).done(
         
     );
+}
+function UpdatePagesSelect(perPage, count){
+    $('#page option').remove();
+    var numPages = Math.ceil( count / perPage);
+    for(let i = 1; i <= numPages; i++){
+        $('#page').append('<option value="'+i+'">'+i+'</option>');
+    }
 }

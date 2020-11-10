@@ -116,6 +116,7 @@ h1{
 
 .button.save{
     float: right;
+    display: none !important;
     font-size: 0.9em;
     background: #393;
     margin-left: 15px;

@@ -371,8 +371,8 @@ class JsonQuery {
 
     private function dataToResp($data, $firstPageItem, $lastPageItem){
         $dataResp = $this->sortData($data, $this->order, $this->sort);        
-        if($this->perPage != -1 || $this->page != -1 ){
-            return array_slice($dataResp, $firstPageItem, ($lastPageItem - $firstPageItem) );
+        if($this->perPage != -1 && $this->page != -1 ){
+            return array_slice($dataResp, $firstPageItem,  $this->perPage );
         }
         return $dataResp;
     }
